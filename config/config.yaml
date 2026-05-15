@@ -1,0 +1,72 @@
+# Social Media Monitoring Configuration
+
+monitoring:
+  # Keywords to search for across all platforms
+  keywords:
+    - "broken"
+    - "not working"
+    - "doesn't work"
+    - "terrible"
+    - "awful"
+    - "disappointed"
+    - "refund"
+    - "scam"
+    - "fraud"
+    - "worst"
+    - "never again"
+    - "customer service"
+    - "complaint"
+    - "issue"
+    - "problem"
+    - "fix this"
+    - "unacceptable"
+
+  # Brand/account names to monitor mentions of
+  targets:
+    - "YourBrand"   # Replace with your brand name
+
+  # How far back to look (hours)
+  lookback_hours: 24
+
+  # Minimum complaint confidence score (0.0 - 1.0) to include in report
+  min_confidence: 0.6
+
+platforms:
+  twitter:
+    enabled: true
+    # Apify actor: https://apify.com/apidojo/tweet-scraper
+    actor_id: "apidojo/tweet-scraper"
+    max_results: 100
+
+  instagram:
+    enabled: true
+    # Apify actor: https://apify.com/apify/instagram-scraper
+    actor_id: "apify/instagram-scraper"
+    max_results: 50
+
+  facebook:
+    enabled: true
+    # Apify actor: https://apify.com/apify/facebook-posts-scraper
+    actor_id: "apify/facebook-posts-scraper"
+    max_results: 50
+
+  bluesky:
+    enabled: true
+    # Apify actor: https://apify.com/blue-bot/bluesky-scraper
+    actor_id: "blue-bot/bluesky-scraper"
+    max_results: 100
+
+scheduling:
+  # Run every N minutes (0 = run once and exit)
+  interval_minutes: 60
+
+reporting:
+  # Output formats: console, json, slack, email
+  outputs:
+    - console
+    - json
+
+  json_output_dir: "./reports"
+
+  # Minimum severity to trigger Slack/email alerts: low, medium, high
+  alert_threshold: medium

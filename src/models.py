@@ -10,6 +10,8 @@ class Platform(str, Enum):
     INSTAGRAM = "instagram"
     FACEBOOK = "facebook"
     BLUESKY = "bluesky"
+    TIKTOK = "tiktok"
+    TWITCH = "twitch"
 
 
 class Severity(str, Enum):

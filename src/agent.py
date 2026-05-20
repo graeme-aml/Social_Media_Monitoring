@@ -7,7 +7,14 @@ from apify_client import ApifyClient
 from rich.console import Console
 
 from src.models import MonitoringReport, Platform
-from src.scrapers import TwitterScraper, InstagramScraper, FacebookScraper, BlueskyScraper
+from src.scrapers import (
+    TwitterScraper,
+    InstagramScraper,
+    FacebookScraper,
+    BlueskyScraper,
+    TikTokScraper,
+    TwitchScraper,
+)
 from src.analysis import ComplaintDetector
 from src.reporting import Reporter
 
@@ -60,6 +67,14 @@ class SocialMediaMonitoringAgent:
             Platform.BLUESKY: (
                 "bluesky",
                 lambda cfg: BlueskyScraper(self.apify_client, cfg["actor_id"], cfg["max_results"]),
+            ),
+            Platform.TIKTOK: (
+                "tiktok",
+                lambda cfg: TikTokScraper(self.apify_client, cfg["actor_id"], cfg["max_results"]),
+            ),
+            Platform.TWITCH: (
+                "twitch",
+                lambda cfg: TwitchScraper(self.apify_client, cfg["actor_id"], cfg["max_results"]),
             ),
         }
 

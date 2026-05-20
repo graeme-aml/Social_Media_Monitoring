@@ -5,6 +5,8 @@ from src.scrapers.twitter import TwitterScraper
 from src.scrapers.instagram import InstagramScraper
 from src.scrapers.facebook import FacebookScraper
 from src.scrapers.bluesky import BlueskyScraper
+from src.scrapers.tiktok import TikTokScraper
+from src.scrapers.twitch import TwitchScraper
 from src.models import Platform
 
 
@@ -37,6 +39,22 @@ SAMPLE_BLUESKY = {
     "text": "@brand your app is completely broken, scam!",
     "createdAt": "2026-01-01T12:00:00Z",
     "author": {"handle": "frustrated.bsky.social"},
+}
+
+SAMPLE_TIKTOK = {
+    "id": "tt001",
+    "text": "This brand's product is terrible, don't buy! #scam",
+    "createTime": 1767230400,  # 2026-01-01 12:00:00 UTC
+    "authorMeta": {"name": "tiktok_reviewer"},
+    "webVideoUrl": "https://www.tiktok.com/@tiktok_reviewer/video/tt001",
+}
+
+SAMPLE_TWITCH = {
+    "id": "tw001",
+    "text": "this stream is broken, worst experience ever",
+    "createdAt": "2026-01-01T12:00:00Z",
+    "channelName": "YourBrand",
+    "authorName": "angry_viewer",
 }
 
 
@@ -84,3 +102,38 @@ class TestBlueskyScraper:
         assert len(posts) == 1
         assert posts[0].platform == Platform.BLUESKY
         assert "bsky.app" in posts[0].url
+
+
+class TestTikTokScraper:
+    def test_scrape_returns_posts(self):
+        client = make_mock_client([SAMPLE_TIKTOK])
+        scraper = TikTokScraper(client, "clockworks/tiktok-scraper")
+        posts = scraper.scrape(["terrible"], ["YourBrand"], 24 * 365 * 10)  # wide window
+        assert len(posts) == 1
+        assert posts[0].platform == Platform.TIKTOK
+        assert posts[0].author == "tiktok_reviewer"
+        assert "tiktok.com" in posts[0].url
+
+    def test_filters_old_posts(self):
+        client = make_mock_client([SAMPLE_TIKTOK])
+        scraper = TikTokScraper(client, "clockworks/tiktok-scraper")
+        # lookback_hours=1 means only posts from the last hour — sample is from 2026, so filtered out
+        posts = scraper.scrape(["terrible"], ["YourBrand"], 1)
+        assert len(posts) == 0
+
+
+class TestTwitchScraper:
+    def test_scrape_returns_matching_posts(self):
+        client = make_mock_client([SAMPLE_TWITCH])
+        scraper = TwitchScraper(client, "pogreb/twitch-scraper")
+        posts = scraper.scrape(["broken"], ["YourBrand"], 24 * 365 * 10)
+        assert len(posts) == 1
+        assert posts[0].platform == Platform.TWITCH
+        assert posts[0].author == "angry_viewer"
+
+    def test_filters_non_keyword_posts(self):
+        client = make_mock_client([SAMPLE_TWITCH])
+        scraper = TwitchScraper(client, "pogreb/twitch-scraper")
+        # keyword doesn't appear in the sample text
+        posts = scraper.scrape(["refund"], ["YourBrand"], 24 * 365 * 10)
+        assert len(posts) == 0

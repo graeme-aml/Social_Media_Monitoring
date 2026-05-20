@@ -56,6 +56,18 @@ platforms:
     actor_id: "blue-bot/bluesky-scraper"
     max_results: 100
 
+  tiktok:
+    enabled: true
+    # Apify actor: https://apify.com/clockworks/tiktok-scraper
+    actor_id: "clockworks/tiktok-scraper"
+    max_results: 50
+
+  twitch:
+    enabled: true
+    # Apify actor: https://apify.com/pogreb/twitch-scraper
+    actor_id: "pogreb/twitch-scraper"
+    max_results: 100
+
 scheduling:
   # Run every N minutes (0 = run once and exit)
   interval_minutes: 60
